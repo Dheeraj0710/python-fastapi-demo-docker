@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r server/general/requirements.txt
+
+      - name: Verify FastAPI application
+        env: 
+          PYTHONPATH: server/general
+        run: python -c "from app.main import app; print('FastAPI application loaded successfully')"
+      - name: Build Docker image
+        run: docker build -t fastapi-demo:ci .
